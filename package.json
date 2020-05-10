@@ -1,6 +1,6 @@
 {
   "name": "locustjs-collections",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This library provides a bunch of utlity collection classes such as List",
   "main": "index.cjs.js",
   "module": "index.esm.js",

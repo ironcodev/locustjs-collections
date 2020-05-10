@@ -45,34 +45,57 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var List = /*#__PURE__*/function () {
-  function List(itemType) {
+  function List(x, itemType) {
     _classCallCheck(this, List);
 
-    this._items = [];
-    this.type = itemType;
+    if ((0, _locustjsBase.isArray)(x)) {
+      this._items = [];
+      this.type = itemType;
+
+      var _iterator = _createForOfIteratorHelper(x),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var item = _step.value;
+          this.add(item);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    } else if (_instanceof(x, List)) {
+      this._items = [];
+      this.type = x.type;
+      this._items = _toConsumableArray(x._items);
+    } else {
+      this._items = [];
+      this.type = x;
+    }
   }
 
   _createClass(List, [{
     key: Symbol.iterator,
     value: /*#__PURE__*/regeneratorRuntime.mark(function value() {
-      var _iterator, _step, item;
+      var _iterator2, _step2, item;
 
       return regeneratorRuntime.wrap(function value$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _iterator = _createForOfIteratorHelper(this._items);
+              _iterator2 = _createForOfIteratorHelper(this._items);
               _context.prev = 1;
 
-              _iterator.s();
+              _iterator2.s();
 
             case 3:
-              if ((_step = _iterator.n()).done) {
+              if ((_step2 = _iterator2.n()).done) {
                 _context.next = 9;
                 break;
               }
 
-              item = _step.value;
+              item = _step2.value;
               _context.next = 7;
               return item;
 
@@ -88,12 +111,12 @@ var List = /*#__PURE__*/function () {
               _context.prev = 11;
               _context.t0 = _context["catch"](1);
 
-              _iterator.e(_context.t0);
+              _iterator2.e(_context.t0);
 
             case 14:
               _context.prev = 14;
 
-              _iterator.f();
+              _iterator2.f();
 
               return _context.finish(14);
 
@@ -131,8 +154,32 @@ x.constructor.name == this.type;
       if (ok) {
         this._items.push(item);
       } else {
-        throw "List.add(): invalid item type. expected ".concat(this.type);
+        if ((0, _locustjsBase.isFunction)(this.type)) {
+          throw "List.add(): invalid item type. expected ".concat(this.type.prototype.constructor.name);
+        } else {
+          throw "List.add(): invalid item type. expected ".concat(this.type);
+        }
       }
+    }
+  }, {
+    key: "addAt",
+    value: function addAt(item, index) {
+      var ok = this.canAdd(item);
+
+      if (ok) {
+        this._items.splice(index, 0, item);
+      } else {
+        if ((0, _locustjsBase.isFunction)(this.type)) {
+          throw "List.add(): invalid item type. expected ".concat(this.type.prototype.constructor.name);
+        } else {
+          throw "List.add(): invalid item type. expected ".concat(this.type);
+        }
+      }
+    }
+  }, {
+    key: "insertAdd",
+    value: function insertAdd(item, index) {
+      return this.addAt(item, index);
     }
   }, {
     key: "push",
@@ -143,6 +190,11 @@ x.constructor.name == this.type;
     key: "append",
     value: function append(item) {
       this.add(item);
+    }
+  }, {
+    key: "prepend",
+    value: function prepend(item) {
+      this.addAt(item, 0);
     }
   }, {
     key: "remove",
@@ -169,6 +221,322 @@ x.constructor.name == this.type;
       }
 
       return result;
+    }
+  }, {
+    key: "elementAt",
+    value: function elementAt(index) {
+      var result;
+
+      if (index >= 0 && index < this.length) {
+        result = this._items[index];
+      } else {
+        throw new RangeError("index out of range: ".concat(index));
+      }
+
+      return result;
+    }
+  }, {
+    key: "find",
+    value: function find(x) {
+      if ((0, _locustjsBase.isFunction)(x)) {
+        return this._items.find(x, this);
+      } else {
+        return this._items.find(function (a) {
+          return a == x;
+        }, this);
+      }
+    }
+  }, {
+    key: "first",
+    value: function first() {
+      return this.length > 0 ? this._items[0] : undefined;
+    }
+  }, {
+    key: "last",
+    value: function last() {
+      return this.length > 0 ? this._items[this.length - 1] : undefined;
+    }
+  }, {
+    key: "indexOf",
+    value: function indexOf(x, fromIndex) {
+      if ((0, _locustjsBase.isFunction)(x)) {
+        var result = -1;
+
+        if (fromIndex == undefined) {
+          fromIndex = 0;
+        }
+
+        for (var i = fromIndex; i < this.length; i++) {
+          if (x(this._items[i], i, this)) {
+            result = i;
+            break;
+          }
+        }
+
+        return result;
+      } else {
+        return this._items.indexOf(x, fromIndex);
+      }
+    }
+  }, {
+    key: "lastIndexOf",
+    value: function lastIndexOf(x, fromIndex) {
+      if ((0, _locustjsBase.isFunction)(x)) {
+        var result = -1;
+
+        if (fromIndex == undefined) {
+          fromIndex = this.length - 1;
+        }
+
+        for (var i = fromIndex; i >= 0; i--) {
+          if (x(this._items[i], i, this)) {
+            result = i;
+            break;
+          }
+        }
+
+        return result;
+      } else {
+        return this._items.lastIndexOf(x, fromIndex);
+      }
+    }
+  }, {
+    key: "includes",
+    value: function includes(x, fromIndex) {
+      return this.indexOf(x, fromIndex) >= 0;
+    }
+  }, {
+    key: "exists",
+    value: function exists(x, fromIndex) {
+      return this.includes(x, fromIndex);
+    }
+  }, {
+    key: "contains",
+    value: function contains(x, fromIndex) {
+      return this.includes(x, fromIndex);
+    }
+  }, {
+    key: "reverse",
+    value: function reverse() {
+      return new List(_toConsumableArray(this._items).reverse(), this.type);
+    }
+  }, {
+    key: "filter",
+    value: function filter(fn) {
+      return new List(this._items.filter(fn, this), this.type);
+    }
+  }, {
+    key: "where",
+    value: function where(fn) {
+      return new List(this.filter(fn), this.type);
+    }
+  }, {
+    key: "select",
+    value: function select(fn) {
+      return new List(this.map(fn), this.type);
+    }
+  }, {
+    key: "top",
+    value: function top(n) {
+      return new List(this.filter(function (x, i) {
+        return i < n;
+      }), this.type);
+    }
+  }, {
+    key: "skip",
+    value: function skip(n) {
+      return new List(this.filter(function (x, i) {
+        return i > n;
+      }), this.type);
+    }
+  }, {
+    key: "sort",
+    value: function sort(fn) {
+      return new List(_toConsumableArray(this._items).sort(fn), this.type);
+    }
+  }, {
+    key: "sortBy",
+    value: function sortBy(fn) {
+      return new List(_toConsumableArray(this._items).sort(function (a, b) {
+        return fn(a) > fn(b) ? 1 : -1;
+      }), this.type);
+    }
+  }, {
+    key: "orderBy",
+    value: function orderBy(fn) {
+      return this.sortBy(fn);
+    }
+  }, {
+    key: "orderByDescending",
+    value: function orderByDescending(fn) {
+      return this.reverse().orderBy(fn);
+    }
+  }, {
+    key: "forEach",
+    value: function forEach(fn) {
+      return this._items.forEach(fn, this);
+    }
+  }, {
+    key: "slice",
+    value: function slice(begin, end) {
+      return new List(this._items.slice(begin, end), this.type);
+    }
+  }, {
+    key: "map",
+    value: function map(fn) {
+      return this._items.map(fn);
+    }
+  }, {
+    key: "merge",
+    value: function merge(separator) {
+      return this._items.join(separator);
+    }
+  }, {
+    key: "mergeWith",
+    value: function mergeWith(x, ignoreErrors) {
+      if (_instanceof(x, List)) {
+        if (x.type == this.type) {
+          return this._items.concat(x._items);
+        } else {
+          if (!ignoreErrors) {
+            throw "Lists' types are inconsistent. cannot join.";
+          }
+        }
+      } else if ((0, _locustjsBase.isArray)(x)) {
+        if (this.type == undefined) {
+          return this._items.concat(x);
+        } else {
+          var _iterator3 = _createForOfIteratorHelper(x),
+              _step3;
+
+          try {
+            for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+              var item = _step3.value;
+
+              if (!ignoreErrors) {
+                this.add(item);
+              } else {
+                if (this.canAdd(item)) {
+                  this.add(item);
+                }
+              }
+            }
+          } catch (err) {
+            _iterator3.e(err);
+          } finally {
+            _iterator3.f();
+          }
+        }
+      } else {
+        throw "invalid argument. expected list or array.";
+      }
+    }
+  }, {
+    key: "reduce",
+    value: function reduce(fn, initValue) {
+      return this._items.reduce(fn, initValue);
+    }
+  }, {
+    key: "all",
+    value: function all(fn) {
+      return this.every(fn);
+    }
+  }, {
+    key: "every",
+    value: function every(fn) {
+      return this._items.every(fn, this);
+    }
+  }, {
+    key: "any",
+    value: function any(fn) {
+      return this.some(fn);
+    }
+  }, {
+    key: "some",
+    value: function some(fn) {
+      return this._items.some(fn, this);
+    }
+  }, {
+    key: "count",
+    value: function count(fn) {
+      if (fn == undefined) {
+        return this.length;
+      } else {
+        return this._items.filter(fn).length;
+      }
+    }
+  }, {
+    key: "groupBy",
+    value: function groupBy(fn) {
+      var _this = this;
+
+      var result = new List();
+
+      var _iterator4 = _createForOfIteratorHelper(this._items),
+          _step4;
+
+      try {
+        var _loop = function _loop() {
+          var x = _step4.value;
+          var key = fn(x);
+          var index = result.indexOf(function (x) {
+            return x.key == key;
+          });
+
+          if (index < 0) {
+            result.push({
+              key: key,
+              items: new List(_this.type)
+            });
+            index = result.length - 1;
+          }
+
+          result.elementAt(index).items.push(x);
+        };
+
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          _loop();
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+
+      return result;
+    }
+  }, {
+    key: "join",
+    value: function join(x, leftFn, rightFn) {
+      if ((0, _locustjsBase.isString)(x)) {
+        return this.merge(x);
+      }
+
+      if ((0, _locustjsBase.isArray)(x) || _instanceof(x, List)) {
+        var result = new List();
+        return result;
+      }
+    }
+  }, {
+    key: "leftJoin",
+    value: function leftJoin(x, leftFn, rightFn) {// to be implemented
+    }
+  }, {
+    key: "rightJoin",
+    value: function rightJoin(x, leftFn, rightFn) {// to be implemented
+    }
+  }, {
+    key: "innerJoin",
+    value: function innerJoin(x, leftFn, rightFn) {// to be implemented
+    }
+  }, {
+    key: "union",
+    value: function union(x, ignoreErrors) {
+      return this.mergeWith(x, ignoreErrors);
+    }
+  }, {
+    key: "intersect",
+    value: function intersect(x, ignoreErrors) {// to be implemented
     }
   }, {
     key: "clear",
