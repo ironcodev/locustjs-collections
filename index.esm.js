@@ -61,8 +61,7 @@ class List {
 							|| (this.type == 'array'		&& isArray(item))
 							|| (this.type == 'function'		&& isFunction(item))
 							|| (this.type == 'primitive'	&& isPrimitive(item))
-							|| (isObject(item) && x.constructor && x.constructor.name == 
-this.type);
+							|| (isObject(item) && x.constructor && x.constructor.name == this.type);
 			} else {
 				result = item instanceof this.type;
 			}
@@ -70,33 +69,28 @@ this.type);
 		
 		return result;
 	}
+	_throwInvalidItemError() {
+		if (isFunction(this.type)) {
+			throw `List.add(): invalid item type. expected '${this.type.prototype.constructor.name}'`
+		} else {
+			throw `List.add(): invalid item type. expected '${this.type}'`
+		}
+	}
 	add(item) {
-		let ok = this.canAdd(item);
-		
-		if (ok) {
+		if (this.canAdd(item)) {
 			this._items.push(item);
 		} else {
-			if (isFunction(this.type)) {
-				throw `List.add(): invalid item type. expected ${this.type.prototype.constructor.name}`
-			} else {
-				throw `List.add(): invalid item type. expected ${this.type}`
-			}
+			this._throwInvalidItemError();
 		}
 	}
 	addAt(item, index) {
-		let ok = this.canAdd(item);
-		
-		if (ok) {
+		if (this.canAdd(item)) {
 			this._items.splice(index, 0, item);
 		} else {
-			if (isFunction(this.type)) {
-				throw `List.add(): invalid item type. expected ${this.type.prototype.constructor.name}`
-			} else {
-				throw `List.add(): invalid item type. expected ${this.type}`
-			}
+			this._throwInvalidItemError();
 		}
 	}
-	insertAdd(item, index) {
+	insertAt(item, index) {
 		return this.addAt(item, index);
 	}
 	push(item) {
@@ -232,16 +226,24 @@ this.type);
 	forEach(fn) {
 		return this._items.forEach(fn, this);
 	}
-	slice(begin, end) {
-		return new List(this._items.slice(begin, end), this.type);
+	slice(fromIndex, toIndex) {
+		return new List(this._items.slice(fromIndex, toIndex), this.type);
 	}
 	map(fn) {
 		return this._items.map(fn);
 	}
-	merge(separator) {
-		return this._items.join(separator);
+	join(x, left, right) {
+		if (isString(x)) {
+			return this._items.join(x);
+		}
+
+		if (isArray(x) || x instanceof List) {
+			const result = new List();
+			
+			return result;
+		}
 	}
-	mergeWith(x, ignoreErrors) {
+	merge(x, ignoreErrors) {
 		if (x instanceof List) {
 			if (x.type == this.type) {
 				return this._items.concat(x._items);
@@ -307,17 +309,6 @@ this.type);
 
 		return result;
 	}
-	join(x, leftFn, rightFn) {
-		if (isString(x)) {
-			return this.merge(x);
-		}
-
-		if (isArray(x) || x instanceof List) {
-			const result = new List();
-			
-			return result;
-		}
-	}
 	leftJoin(x, leftFn, rightFn) {
 		// to be implemented
 	}
@@ -328,7 +319,7 @@ this.type);
 		// to be implemented
 	}
 	union(x, ignoreErrors) {
-		return this.mergeWith(x, ignoreErrors);
+		return this.merge(x, ignoreErrors);
 	}
 	intersect(x, ignoreErrors) {
 		// to be implemented
@@ -338,6 +329,9 @@ this.type);
 	}
 	toArray() {
 		return [...this._items];
+	}
+	toJson() {
+		return JSON.stringify(this._items);
 	}
 }
 

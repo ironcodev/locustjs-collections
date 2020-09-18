@@ -7,42 +7,27 @@ exports.List = void 0;
 
 var _locustjsBase = require("locustjs-base");
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || 
-_nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array 
-objects must have a [Symbol.iterator]() method."); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
-function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return !!right
-[Symbol.hasInstance](left); } else { return left instanceof right; } }
+function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return !!right[Symbol.hasInstance](left); } else { return left instanceof right; } }
 
-function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = 
-_unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { 
-done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn 
-order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: 
-function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { 
-didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = 
-Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return 
-Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = 
-arr[i]; } return arr2; }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _classCallCheck(instance, Constructor) { if (!_instanceof(instance, Constructor)) { throw new TypeError("Cannot call a class as a 
-function"); } }
+function _classCallCheck(instance, Constructor) { if (!_instanceof(instance, Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = 
-descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, 
-descriptor.key, descriptor); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if 
-(staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var List = /*#__PURE__*/function () {
   function List(x, itemType) {
@@ -134,11 +119,7 @@ var List = /*#__PURE__*/function () {
 
       if (this.type != undefined) {
         if ((0, _locustjsBase.isSomeString)(this.type)) {
-          result = false || this.type == 'number' && (0, _locustjsBase.isNumber)(item) || this.type == 'string' && (0, _locustjsBase.isString)(item) || 
-this.type == 'date' && (0, _locustjsBase.isDate)(item) || this.type == 'object' && (0, _locustjsBase.isObject)(item) || this.type == 'bool' && (0, 
-_locustjsBase.isBool)(item) || this.type == 'array' && (0, _locustjsBase.isArray)(item) || this.type == 'function' && (0, _locustjsBase.isFunction)
-(item) || this.type == 'primitive' && (0, _locustjsBase.isPrimitive)(item) || (0, _locustjsBase.isObject)(item) && x.constructor && 
-x.constructor.name == this.type;
+          result = false || this.type == 'number' && (0, _locustjsBase.isNumber)(item) || this.type == 'string' && (0, _locustjsBase.isString)(item) || this.type == 'date' && (0, _locustjsBase.isDate)(item) || this.type == 'object' && (0, _locustjsBase.isObject)(item) || this.type == 'bool' && (0, _locustjsBase.isBool)(item) || this.type == 'array' && (0, _locustjsBase.isArray)(item) || this.type == 'function' && (0, _locustjsBase.isFunction)(item) || this.type == 'primitive' && (0, _locustjsBase.isPrimitive)(item) || (0, _locustjsBase.isObject)(item) && x.constructor && x.constructor.name == this.type;
         } else {
           result = _instanceof(item, this.type);
         }
@@ -147,38 +128,35 @@ x.constructor.name == this.type;
       return result;
     }
   }, {
+    key: "_throwInvalidItemError",
+    value: function _throwInvalidItemError() {
+      if ((0, _locustjsBase.isFunction)(this.type)) {
+        throw "List.add(): invalid item type. expected '".concat(this.type.prototype.constructor.name, "'");
+      } else {
+        throw "List.add(): invalid item type. expected '".concat(this.type, "'");
+      }
+    }
+  }, {
     key: "add",
     value: function add(item) {
-      var ok = this.canAdd(item);
-
-      if (ok) {
+      if (this.canAdd(item)) {
         this._items.push(item);
       } else {
-        if ((0, _locustjsBase.isFunction)(this.type)) {
-          throw "List.add(): invalid item type. expected ".concat(this.type.prototype.constructor.name);
-        } else {
-          throw "List.add(): invalid item type. expected ".concat(this.type);
-        }
+        this._throwInvalidItemError();
       }
     }
   }, {
     key: "addAt",
     value: function addAt(item, index) {
-      var ok = this.canAdd(item);
-
-      if (ok) {
+      if (this.canAdd(item)) {
         this._items.splice(index, 0, item);
       } else {
-        if ((0, _locustjsBase.isFunction)(this.type)) {
-          throw "List.add(): invalid item type. expected ".concat(this.type.prototype.constructor.name);
-        } else {
-          throw "List.add(): invalid item type. expected ".concat(this.type);
-        }
+        this._throwInvalidItemError();
       }
     }
   }, {
-    key: "insertAdd",
-    value: function insertAdd(item, index) {
+    key: "insertAt",
+    value: function insertAt(item, index) {
       return this.addAt(item, index);
     }
   }, {
@@ -378,8 +356,8 @@ x.constructor.name == this.type;
     }
   }, {
     key: "slice",
-    value: function slice(begin, end) {
-      return new List(this._items.slice(begin, end), this.type);
+    value: function slice(fromIndex, toIndex) {
+      return new List(this._items.slice(fromIndex, toIndex), this.type);
     }
   }, {
     key: "map",
@@ -387,13 +365,20 @@ x.constructor.name == this.type;
       return this._items.map(fn);
     }
   }, {
-    key: "merge",
-    value: function merge(separator) {
-      return this._items.join(separator);
+    key: "join",
+    value: function join(x, left, right) {
+      if ((0, _locustjsBase.isString)(x)) {
+        return this._items.join(x);
+      }
+
+      if ((0, _locustjsBase.isArray)(x) || _instanceof(x, List)) {
+        var result = new List();
+        return result;
+      }
     }
   }, {
-    key: "mergeWith",
-    value: function mergeWith(x, ignoreErrors) {
+    key: "merge",
+    value: function merge(x, ignoreErrors) {
       if (_instanceof(x, List)) {
         if (x.type == this.type) {
           return this._items.concat(x._items);
@@ -506,18 +491,6 @@ x.constructor.name == this.type;
       return result;
     }
   }, {
-    key: "join",
-    value: function join(x, leftFn, rightFn) {
-      if ((0, _locustjsBase.isString)(x)) {
-        return this.merge(x);
-      }
-
-      if ((0, _locustjsBase.isArray)(x) || _instanceof(x, List)) {
-        var result = new List();
-        return result;
-      }
-    }
-  }, {
     key: "leftJoin",
     value: function leftJoin(x, leftFn, rightFn) {// to be implemented
     }
@@ -532,7 +505,7 @@ x.constructor.name == this.type;
   }, {
     key: "union",
     value: function union(x, ignoreErrors) {
-      return this.mergeWith(x, ignoreErrors);
+      return this.merge(x, ignoreErrors);
     }
   }, {
     key: "intersect",
@@ -547,6 +520,11 @@ x.constructor.name == this.type;
     key: "toArray",
     value: function toArray() {
       return _toConsumableArray(this._items);
+    }
+  }, {
+    key: "toJson",
+    value: function toJson() {
+      return JSON.stringify(this._items);
     }
   }, {
     key: "type",
